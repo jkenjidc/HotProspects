@@ -10,19 +10,26 @@ import SwiftData
 
 struct EditProscpectView: View {
     var prospect: Prospect
+    @Environment(\.dismiss) var dismiss
     @State private var name = ""
     @State private var email = ""
+    @Binding public var selected: Set<Prospect>
     var body: some View {
         TextField(prospect.name, text: $name)
         TextField(prospect.emailAddress, text: $email)
         Button("save") {
-            prospect.name = name
-            prospect.emailAddress = email
+            if !name.isEmpty {prospect.name = name}
+            if !email.isEmpty {prospect.emailAddress = email}
+            dismiss()
         }
+        .onAppear(perform: {
+            selected.removeAll()
+        })
     }
 }
 
 #Preview {
     let pro = Prospect(name: "Paul", emailAddress: "Hud", isContacted: false)
-    return EditProscpectView(prospect: pro)
+    @State  var selectedProspects = Set<Prospect>()
+    return EditProscpectView(prospect: pro, selected: $selectedProspects)
 }
